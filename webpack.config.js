@@ -1,6 +1,6 @@
 const path = require("path");
 module.exports = {
-  entry: "./src/script.coffee",
+  entry: "./src/index.coffee",
   mode: "development",
   module: {
     rules: [
@@ -15,8 +15,8 @@ module.exports = {
     filename: "app.js"
   },
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
+    contentBase: path.join(__dirname, "src"),
     compress: true,
-    port: 8080
+    port: 3000
   }
 };

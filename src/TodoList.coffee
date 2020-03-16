@@ -41,7 +41,9 @@ define 'TodoList',
         renderItem: (text) ->
             element = document.createElement('li')
             element.innerHTML = 
-            "<div data-key='#{text}'><span class='todo-item-text'>#{text}</span><button class='delete-btn'>Delete</button></div>"
+            "<li class='alist-group-item' data-key='#{text}'><span class='todo-item-text'>#{text}</span>
+                <span class='badge badge-primary delete-btn badge-pill'>D</span>
+            </li>"
             document.querySelector('.todo-list').appendChild(element)
         
         clearList: ->
