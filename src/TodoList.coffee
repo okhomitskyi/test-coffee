@@ -21,8 +21,9 @@ define 'TodoList',
             if (target.classList.contains('todo-item-text'))
                 text = target.parentElement.dataset.key
                 target.innerHTML = "<input name='edit-text' value='#{text}'/>"
-                target.querySelector('input').focus()
-                target.querySelector('input').onblur = (e) ->
+                inputSelector = target.querySelector('input')
+                inputSelector.focus()
+                inputSelector.onblur = (e) ->
                     items[items.indexOf(text)] = e.target.value
                     _render()
         _deleteItem = (e) ->
