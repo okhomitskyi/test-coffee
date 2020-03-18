@@ -1,6 +1,6 @@
 const path = require("path");
 module.exports = {
-  entry: "./src/index.coffee",
+  entry: "./src/app.coffee",
   mode: "development",
   module: {
     rules: [

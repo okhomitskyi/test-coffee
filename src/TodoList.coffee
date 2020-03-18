@@ -3,53 +3,50 @@ define 'TodoList',
     './ViewInterface.coffee'
 ],
 (ViewInterface) ->
-    #afdadad
     class TodoList extends ViewInterface
         items = ['First todo']
-
+        todoListSelector = document.querySelector('.todo-list')
         init: ->
-            self = this
-            this.render()
-            document.querySelector('.todo-list-form').addEventListener('submit', this.addItem.bind(self))
-            document.addEventListener('click', this.deleteItem.bind(self))
-            document.addEventListener('click', this.editItem.bind(self))
-
-        editItem: (e) ->
-            s = @
-            if (e.target.classList.contains('todo-item-text'))
-                text = e.target.parentElement.dataset.key
-                e.target.innerHTML = "<input name='edit-text' value='#{text}'/>"
-                e.target.querySelector('input').focus()
-                e.target.querySelector('input').onblur = (e) ->
+            _render()
+            document.querySelector('.todo-list-form').addEventListener('submit', _addItem.bind(@))
+            document.addEventListener('click', _deleteItem.bind(@))
+            document.addEventListener('click', _editItem.bind(@))
+            todoListSelector.addEventListener('DOMNodeRemoved', _onDestroy.bind(@))
+        _onDestroy = ->
+            document.querySelector('.todo-list-form').removeEventListener('submit', _addItem.bind(@))
+            document.removeEventListener('click', _deleteItem.bind(@))
+            document.removeEventListener('click', _editItem.bind(@))
+        _editItem = (e) ->
+            { target } = e
+            if (target.classList.contains('todo-item-text'))
+                text = target.parentElement.dataset.key
+                target.innerHTML = "<input name='edit-text' value='#{text}'/>"
+                target.querySelector('input').focus()
+                target.querySelector('input').onblur = (e) ->
                     items[items.indexOf(text)] = e.target.value
-                    s.render()
-
-        deleteItem: (e) ->
-            if (e.target.classList.contains("delete-btn"))
-                key = e.target.parentElement.dataset.key
-                items.splice(items.indexOf(key), 1)
-                @render()
-        
-        addItem: (e) ->
+                    _render()
+        _deleteItem = (e) ->
+            { target } = e
+            if (target.classList.contains("delete-btn"))
+                itemKey = target.parentElement.dataset.key
+                items.splice(items.indexOf(itemKey), 1)
+                _render()
+        _addItem = (e) ->
             e.preventDefault()
             formData = new FormData(e.target)
             items.push(formData.get('text'))
             e.target.reset()
-            @render()
-        
-
-        renderItem: (text) ->
+            _render()
+        _renderItem = (text) ->
             element = document.createElement('li')
             element.innerHTML = 
             "<li class='alist-group-item' data-key='#{text}'><span class='todo-item-text'>#{text}</span>
                 <span class='badge badge-primary delete-btn badge-pill'>D</span>
             </li>"
-            document.querySelector('.todo-list').appendChild(element)
-        
-        clearList: ->
-            document.querySelector('.todo-list').innerHTML = ""
-
-        render: ->
-            this.clearList()
+            todoListSelector.appendChild(element)
+        _clearList = ->
+            todoListSelector.innerHTML = ""
+        _render = ->
+            _clearList()
             for item in items
-                this.renderItem(item)
+                _renderItem(item)
