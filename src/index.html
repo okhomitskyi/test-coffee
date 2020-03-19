@@ -8,25 +8,29 @@
     <script data-main="app" src="common/require.js"></script>
   </head>
   <body>
-    <h1 align="center">Todo List</h1>
-    <div class="container">
-      <form class="todo-list-form">
-        <div class="form-group">
-          <label for="exampleInputEmail1">Type something</label>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Item text"
-            name="text"
-          />
-          <small id="emailHelp" class="form-text text-muted"
-            >We'll never share your todo information with anyone else.</small
-          >
+    <div class="container main">
+      <div class="card">
+        <h5 class="card-header">TodoList</h5>
+
+        <div class="card-body">
+          <form class="todo-list-form">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Type something</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Item text"
+                name="text"
+              />
+              <small id="emailHelp" class="form-text text-muted"
+                >We'll never share your todo information with anyone
+                else.</small
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          <ul class="todo-list list-group"></ul>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-      <div class="row">
-        <ul class="todo-list list-group"></ul>
       </div>
     </div>
   </body>

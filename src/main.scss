@@ -1,5 +1,4 @@
 @import "~bootstrap/scss/bootstrap";
-
 @font-face {
   font-family: SegoeUI;
   src: local("Segoe UI Light"),
@@ -11,7 +10,6 @@
       format("truetype");
   font-weight: 100;
 }
-
 @font-face {
   font-family: SegoeUI;
   src: local("Segoe UI Semilight"),
@@ -23,7 +21,6 @@
       format("truetype");
   font-weight: 200;
 }
-
 @font-face {
   font-family: SegoeUI;
   src: local("Segoe UI"),
@@ -35,7 +32,6 @@
       format("truetype");
   font-weight: 400;
 }
-
 @font-face {
   font-family: SegoeUI;
   src: local("Segoe UI Bold"),
@@ -47,7 +43,6 @@
       format("truetype");
   font-weight: 600;
 }
-
 @font-face {
   font-family: SegoeUI;
   src: local("Segoe UI Semibold"),
@@ -59,18 +54,35 @@
       format("truetype");
   font-weight: 700;
 }
-
 * {
   font-family: SegoeUI;
 }
-
 body {
   background-color: #fff;
 }
 h1 {
   font-weight: bold;
 }
-
 .todo-list {
   margin-top: 5px;
+  list-style: none;
+  width: 100%;
+  .list-group-item {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    span {
+      width: 100%;
+    }
+    textarea {
+      width: calc(100% - 50px);
+    }
+  }
+  .edit-btn {
+    margin-left: auto;
+    margin-right: 15px;
+  }
+}
+.main {
+  margin-top: 100px;
 }
