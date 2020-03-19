@@ -1,7 +1,9 @@
 define 'App',
 [
     './TodoList.coffee',
-    './ViewInterface.coffee'
+    './ViewInterface.coffee',
+    './main.scss',
+    'bootstrap'
 ],
 (TodoList, ViewInterface) ->
     class App

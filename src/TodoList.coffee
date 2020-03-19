@@ -6,14 +6,15 @@ define 'TodoList',
     class TodoList extends ViewInterface
         items = ['First todo']
         todoListSelector = document.querySelector('.todo-list')
+        formSelector = document.querySelector('.todo-list-form')
         init: ->
             _render()
-            document.querySelector('.todo-list-form').addEventListener('submit', _addItem.bind(@))
+            formSelector.addEventListener('submit', _addItem.bind(@))
             document.addEventListener('click', _deleteItem.bind(@))
             document.addEventListener('click', _editItem.bind(@))
             todoListSelector.addEventListener('DOMNodeRemoved', _onDestroy.bind(@))
         _onDestroy = ->
-            document.querySelector('.todo-list-form').removeEventListener('submit', _addItem.bind(@))
+            formSelector.removeEventListener('submit', _addItem.bind(@))
             document.removeEventListener('click', _deleteItem.bind(@))
             document.removeEventListener('click', _editItem.bind(@))
         _editItem = (e) ->
@@ -35,6 +36,7 @@ define 'TodoList',
         _addItem = (e) ->
             e.preventDefault()
             formData = new FormData(e.target)
+            console.log('execute')
             items.push(formData.get('text'))
             e.target.reset()
             _render()
