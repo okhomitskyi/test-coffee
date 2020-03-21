@@ -1,17 +1,39 @@
 define 'TodoList',
 [
-    './ViewInterface.coffee'
+    './ViewInterface.coffee',
+    './ObservableCollection.coffee'
 ],
-(ViewInterface) ->
+(ViewInterface, ObservableCollection) ->
     class TodoList extends ViewInterface
-        items = ['First todo']
+
+        observableItems = new ObservableCollection()
         todoListSelector = document.querySelector('.todo-list')
         formSelector = document.querySelector('.todo-list-form')
 
         init: ->
             _render()
-            _initListeners()
-        _initListeners = ->
+            _initDOMListeners()
+            _initWebsocketConnection()
+        _initWebsocketConnection = ->
+            socket = new WebSocket('ws://localhost:8080')
+            socket.onopen = ->
+                socket.send(JSON.stringify({ type: 'GET_DATA' }))
+                observableItems.onChange((data) ->
+                    socket.send(JSON.stringify({ type: 'UPDATE_DATA', payload: data }))
+                )
+            socket.onmessage = (event) ->
+                data = JSON.parse(event.data)
+                observableItems.mutateSilent(data)
+                _render()
+            socket.onclose = (event) ->
+                if (event.wasClean)
+                    console.log('Соединение закрыто чисто')
+                else
+                    console.log('Обрыв соединения')
+                console.log('Код: ' + event.code + ' причина: ' + event.reason)
+            socket.onerror = (error) ->
+                console.log("Ошибка " + error.message)
+        _initDOMListeners = ->
             formSelector.addEventListener('submit', _addItem.bind(@))
             document.addEventListener('click', _deleteItem.bind(@))
             document.addEventListener('click', _editItem.bind(@))
@@ -25,28 +47,33 @@ define 'TodoList',
             if (target.classList.contains('edit-btn'))
                 text = target.parentElement.dataset.key
                 spanSelector = target.parentElement.querySelector('span.todo-item-text')
-                spanSelector.innerHTML = 
+                spanSelector.innerHTML =
                     "<textarea name='edit-text' value='#{text}'>#{text}</textarea>"
                 target.innerHTML = "Confirm"
                 inputSelector = target.parentElement.querySelector('textarea')
                 inputSelector.focus()
 
                 onConfirmEdit = (e) ->
+                    items = observableItems.getItems()
                     items[items.indexOf(text)] = inputSelector.value
+                    observableItems.mutate(items)
                     _render()
                     target.removeEventListener('click', onConfirmEdit)
                 target.addEventListener('click', onConfirmEdit)
         _deleteItem = (e) ->
             { target } = e
             if (target.classList.contains("delete-btn"))
+                items = observableItems.getItems()
                 itemKey = target.parentElement.dataset.key
                 items.splice(items.indexOf(itemKey), 1)
+                observableItems.mutate(items)
                 _render()
         _addItem = (e) ->
             e.preventDefault()
             formData = new FormData(e.target)
-            console.log('execute')
+            items = observableItems.getItems()
             items.push(formData.get('text'))
+            observableItems.mutate(items)
             e.target.reset()
             _render()
         _renderItem = (text) ->
@@ -54,7 +81,8 @@ define 'TodoList',
             element.innerHTML = _generateHtmlElement(text)
             todoListSelector.appendChild(element)
         _generateHtmlElement = (text) ->
-            "<li class='list-group-item' data-key='#{text}'><span class='todo-item-text'>#{text}</span>                
+            "<li class='list-group-item' data-key='#{text}'><span class='todo-item-text'>
+            #{text}</span>
                 <button type='button' class='btn edit-btn btn-primary'>Edit</button>
                 <button type='button' class='btn delete-btn btn-danger'>Delete</button>
             </li>"
@@ -62,5 +90,5 @@ define 'TodoList',
             todoListSelector.innerHTML = ""
         _render = ->
             _clearList()
-            for item in items
+            for item in observableItems.items
                 _renderItem(item)

@@ -14,5 +14,6 @@ define 'App',
         init: ->
             @todoList = new TodoList()
             @todoList.init()
+
     app = new App()
     app.init()
