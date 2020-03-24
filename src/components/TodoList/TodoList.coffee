@@ -7,9 +7,9 @@ define 'TodoList',
     class TodoList
         observableItems = new ObservableCollection()
 
-        todoListSelector = document.querySelector('.todo-list')
+        $todoListSelector = document.querySelector('.todo-list')
 
-        formSelector = document.querySelector('.todo-list-form')
+        $formSelector = document.querySelector('.todo-list-form')
 
         init: ->
             _render()
@@ -29,21 +29,21 @@ define 'TodoList',
                 _render()
             socket.onclose = (event) ->
                 if (event.wasClean)
-                    console.log('Соединение закрыто чисто')
+                    console.log('Clearly closed connection')
                 else
-                    console.log('Обрыв соединения')
-                console.log('Код: ' + event.code + ' причина: ' + event.reason)
+                    console.log('Connection break')
+                console.log('Code: ' + event.code + ' reason: ' + event.reason)
             socket.onerror = (error) ->
-                console.log("Ошибка " + error.message)
+                console.log("Error " + error.message)
 
         _initDOMListeners = ->
-            formSelector.addEventListener('submit', _addItem.bind(@))
+            $formSelector.addEventListener('submit', _addItem.bind(@))
             document.addEventListener('click', _deleteItem.bind(@))
             document.addEventListener('click', _editItem.bind(@))
-            todoListSelector.addEventListener('DOMNodeRemoved', _onDestroy.bind(@))
+            $todoListSelector.addEventListener('DOMNodeRemoved', _onDestroy.bind(@))
 
         _onDestroy = ->
-            formSelector.removeEventListener('submit', _addItem.bind(@))
+            $formSelector.removeEventListener('submit', _addItem.bind(@))
             document.removeEventListener('click', _deleteItem.bind(@))
             document.removeEventListener('click', _editItem.bind(@))
 
@@ -51,8 +51,8 @@ define 'TodoList',
             { target } = e
             if (target.classList.contains('edit-btn'))
                 text = target.parentElement.dataset.key
-                spanSelector = target.parentElement.querySelector('span.todo-item-text')
-                spanSelector.innerHTML =
+                $spanSelector = target.parentElement.querySelector('span.todo-item-text')
+                $spanSelector.innerHTML =
                     "<textarea name='edit-text' value='#{text}'>#{text}</textarea>"
                 target.innerHTML = "Confirm"
                 inputSelector = target.parentElement.querySelector('textarea')
@@ -87,7 +87,7 @@ define 'TodoList',
         _renderItem = (text) ->
             element = document.createElement('li')
             element.innerHTML = _generateHtmlElement(text)
-            todoListSelector.appendChild(element)
+            $todoListSelector.appendChild(element)
 
         _generateHtmlElement = (text) ->
             "<li class='list-group-item' data-key='#{text}'><span class='todo-item-text'>
@@ -97,7 +97,7 @@ define 'TodoList',
             </li>"
 
         _clearList = ->
-            todoListSelector.innerHTML = ""
+            $todoListSelector.innerHTML = ""
 
         _render = ->
             _clearList()
