@@ -1,19 +1,21 @@
 define 'TodoList',
 [
-    './ViewInterface.coffee',
-    './ObservableCollection.coffee'
+    '../../helpers/ObservableCollection.coffee',
+    './TodoList.scss'
 ],
-(ViewInterface, ObservableCollection) ->
-    class TodoList extends ViewInterface
-
+(ObservableCollection) ->
+    class TodoList
         observableItems = new ObservableCollection()
+
         todoListSelector = document.querySelector('.todo-list')
+
         formSelector = document.querySelector('.todo-list-form')
 
         init: ->
             _render()
             _initDOMListeners()
             _initWebsocketConnection()
+
         _initWebsocketConnection = ->
             socket = new WebSocket('ws://localhost:8080')
             socket.onopen = ->
@@ -33,15 +35,18 @@ define 'TodoList',
                 console.log('Код: ' + event.code + ' причина: ' + event.reason)
             socket.onerror = (error) ->
                 console.log("Ошибка " + error.message)
+
         _initDOMListeners = ->
             formSelector.addEventListener('submit', _addItem.bind(@))
             document.addEventListener('click', _deleteItem.bind(@))
             document.addEventListener('click', _editItem.bind(@))
             todoListSelector.addEventListener('DOMNodeRemoved', _onDestroy.bind(@))
+
         _onDestroy = ->
             formSelector.removeEventListener('submit', _addItem.bind(@))
             document.removeEventListener('click', _deleteItem.bind(@))
             document.removeEventListener('click', _editItem.bind(@))
+
         _editItem = (e) ->
             { target } = e
             if (target.classList.contains('edit-btn'))
@@ -60,6 +65,7 @@ define 'TodoList',
                     _render()
                     target.removeEventListener('click', onConfirmEdit)
                 target.addEventListener('click', onConfirmEdit)
+
         _deleteItem = (e) ->
             { target } = e
             if (target.classList.contains("delete-btn"))
@@ -68,6 +74,7 @@ define 'TodoList',
                 items.splice(items.indexOf(itemKey), 1)
                 observableItems.mutate(items)
                 _render()
+
         _addItem = (e) ->
             e.preventDefault()
             formData = new FormData(e.target)
@@ -76,19 +83,24 @@ define 'TodoList',
             observableItems.mutate(items)
             e.target.reset()
             _render()
+
         _renderItem = (text) ->
             element = document.createElement('li')
             element.innerHTML = _generateHtmlElement(text)
             todoListSelector.appendChild(element)
+
         _generateHtmlElement = (text) ->
             "<li class='list-group-item' data-key='#{text}'><span class='todo-item-text'>
             #{text}</span>
                 <button type='button' class='btn edit-btn btn-primary'>Edit</button>
                 <button type='button' class='btn delete-btn btn-danger'>Delete</button>
             </li>"
+
         _clearList = ->
             todoListSelector.innerHTML = ""
+
         _render = ->
             _clearList()
             for item in observableItems.items
                 _renderItem(item)
+                

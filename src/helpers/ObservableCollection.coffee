@@ -3,6 +3,7 @@ define 'ObservableCollection',
 () ->
     class ObservableCollection
         @items
+        
         @listenFunction
 
         getItems: ->
@@ -11,10 +12,14 @@ define 'ObservableCollection',
         constructor: ->
             @items = []
             @listenFunction = null
+
         mutate: (mutateItems) ->
             @items = mutateItems
             @listenFunction(@items)
+
         mutateSilent: (mutateItems) ->
             @items = mutateItems
+
         onChange: (callback) ->
             @listenFunction = callback
+            
